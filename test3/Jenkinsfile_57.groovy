@@ -36,18 +36,16 @@ pipeline
         stage ('docker image build')
         {
             steps {
-                //build 
-                  bat 'docker build -f Dockerfile.groovy -t albertprofedev/libraryh2command:latest .'
-                }
+                //build docker project with dockerfile located at project root and tagged
+                bat 'docker build -f Dockerfile.groovy -t albertprofedev/libraryh2command:latest .'
+            }
          }
         stage ('docker image push to Docker Hub')
         {
             steps {  
                 //https://www.jenkins.io/doc/pipeline/steps/credentials-binding/
-                //echo 'pushing docker to dockerhub' 
-               
-               
-                
+                echo 'pushing docker to dockerhub' 
+                // credentials from jenkins global > groovy enviroment > withDockerRegistry
                 withDockerRegistry([ credentialsId: "dockerhubcredentials", url: "" ]) {
                     bat 'echo %DOCKER_COMMON_CREDS_USR%'
                     bat 'echo %DOCKER_COMMON_CREDS_PSW%'
@@ -55,7 +53,6 @@ pipeline
                     bat 'docker login -u %DOCKER_COMMON_CREDS_USR% -p %DOCKER_COMMON_CREDS_PSW%' 
                     bat 'docker push  %DOCKER_COMMON_CREDS_USR%/libraryh2command:latest'
                 }
-                
                // bat 'mvn Dockerfile.groovy:push'                    
             }
         }
